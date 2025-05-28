@@ -1,0 +1,91 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+<div class="container py-5">
+  <h2 class="text-center mb-5 text-primary">Где нас найти?</h2>
+  <div class="row g-4 align-items-center">
+    <div class="col-md-6">
+      <div id="map" style="height: 400px;" class="rounded shadow"></div>
+    </div>
+    <div class="col-md-6">
+      <div class="bg-light rounded shadow p-4">
+        <h4 class="mb-4 text-success">Контактная информация</h4>
+        <p><i class="bi bi-geo-alt-fill text-danger me-2"></i><strong>Адрес:</strong> 1-я Тверская-Ямская улица, 2, Москва, 125047</p>
+        <p><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Телефон:</strong> +7 (900) 123-45-67</p>
+        <p><i class="bi bi-envelope-fill text-warning me-2"></i><strong>Email:</strong> info@truetravel.ru</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Координаты адреса: 55.770936, 37.587234
+  var map = L.map('map').setView([55.770936, 37.587234], 16);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  L.marker([55.770936, 37.587234])
+    .addTo(map)
+    .bindPopup('TrueTravel<br>1-я Тверская-Ямская, 2')
+    .openPopup();
+</script>
+<hr class="my-5">
+
+<div class="container pb-5">
+  <h3 class="mb-4">Часто задаваемые вопросы (Россия)</h3>
+  <p class="text-muted">Опубликовано: 25.02.2019</p>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <h5><strong>Где найти:</strong></h5>
+      <ul>
+        <li><a href="#">информацию о сотрудничестве</a></li>
+        <li><a href="#">информацию о работе с системой online-бронирования, личный кабинет</a></li>
+        <li><a href="#">информацию о системе тарифов</a></li>
+        <li><a href="#">информацию по доплатам (топливные сборы, индивидуальные трансферы, новогодние ужины и др.)</a></li>
+        <li><a href="#">каталог отелей</a></li>
+        <li><a href="#">информацию по авиаперелетам (расписание, стоимость, изменения в расписании, бронирование туров на регулярных рейсах)</a></li>
+        <li><a href="#">суточные цены</a></li>
+        <li><a href="#">стоимость доплаты за детей до 2 лет (инфантов)</a></li>
+        <li><a href="#">информацию по «перекрестку» рейсов</a></li>
+        <li><a href="#">нестандартные решения туров (VIP, спорт, свадьбы)</a></li>
+        <li><a href="#">сроки оплаты туров</a></li>
+        <li><a href="#">способы оплаты туров</a></li>
+        <li><a href="#">информацию по выдаче документов</a></li>
+        <li><a href="#">информацию по бонусной программе TEZ-Bonus</a></li>
+        <li><a href="#">контактную информацию</a></li>
+        <li><a href="#">подписку на рассылку</a></li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h5><strong>Что делать, если:</strong></h5>
+      <ul>
+        <li><a href="#">нет паспортных данных туристов</a></li>
+        <li><a href="#">надо добавить в заявку ребенка до 2-х лет</a></li>
+        <li><a href="#">летит мини-группа (строго ДО 10 человек) в один отель, несколько заявок</a></li>
+        <li><a href="#">не проставлена стоимость в заявке (стоит п/а)</a></li>
+        <li><a href="#">надо сделать запрос по отелю (стране, проживание инфанта и пр.)</a></li>
+        <li><a href="#">надо рассчитать сложный тур</a></li>
+        <li><a href="#">надо «подвесить билеты», зафиксировать цену</a></li>
+        <li><a href="#">надо сделать изменения по заявке</a></li>
+        <li><a href="#">надо аннулировать заявку</a></li>
+        <li><a href="#">туристы забыли вещи на курорте</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+

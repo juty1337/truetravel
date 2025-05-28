@@ -1,0 +1,30 @@
+
+{% extends 'shop/base.html' %}
+{% block content %}
+<h2>Регистрация</h2>
+<form method="post" id="register-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label>
+        <input type="checkbox" name="rules" required> Согласен с правилами регистрации
+    </label>
+    <button type="submit">Зарегистрироваться</button>
+</form>
+<div id="error-messages"></div>
+<script>
+    $("#register-form").on("submit", function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: window.location.href,
+            method: "POST",
+            data: $(this).serialize(),
+            success: function(data) {
+                window.location.href = "/login/";
+            },
+            error: function(xhr) {
+                $("#error-messages").text("Ошибка регистрации. Проверьте введенные данные.");
+            }
+        });
+    });
+</script>
+{% endblock %}

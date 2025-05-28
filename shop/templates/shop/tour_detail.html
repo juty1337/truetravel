@@ -1,0 +1,281 @@
+{% extends 'shop/base.html' %} {% load static %} {% block content %}
+<style>
+  header {
+    display: none !important;
+  }
+
+  footer {
+    display: none !important;
+  }
+</style>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+
+<div class="container mt-5">
+  <div class="row">
+    
+    <!-- Левая часть -->
+    <div class="col-md-7">
+      <div id="nametour" class="text-warning fs-4">
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <h1 style="color: black">{{ tour.name }}</h1>
+      </div>
+
+      <div id="tourburger">
+        <i class="underline"><a href="#описание">Описание</a></i>
+        <i><a href="{% url 'main' %}">Подбор тура</a></i>
+        <i><a href="#туры">Доступные туры</a></i>
+        <i><a href="#карта">На карте</a></i>
+        <i><a href="#примечание">Примечание</a></i>
+      </div>
+
+      <hr
+        style="
+          position: relative;
+          left: -350px;
+          top: -39px;
+          border-top: 3px solid rgba(102, 100, 95, 0.616);
+          width: 2000px;
+        "
+      />
+
+      <div class="gallery">
+        <div class="main-image mb-3">
+          <img
+            id="mainPreview"
+            src="{{ tour.images.first.image.url }}"
+            class="img-fluid rounded w-200"
+            alt="Главное фото тура"
+            style="width: 1000px; max-height: 640px"
+          />
+        </div>
+
+        <div class="row row-cols-auto g-2">
+          {% for image in tour.images.all %}
+          <div class="col">
+            <img
+              src="{{ image.image.url }}"
+              class="img-thumbnail small-thumb"
+              alt="Миниатюра"
+              style="height: 80px; cursor: pointer"
+              onclick="updateMainImage('{{ image.image.url }}')"
+            />
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <script>
+        function updateMainImage(src) {
+          document.getElementById("mainPreview").src = src;
+        }
+      </script>
+    </div>
+
+    <!-- Правая часть -->
+    <div id="rightside" class="col-md-5">
+      <div class="card p-3 shadow-sm border-0" style="font-size: 14px">
+        <!-- Карта -->
+        <div class="mb-2">
+          <div id="map" style="height: 170px" class="rounded"></div>
+          <button
+            class="btn btn-outline-secondary w-100 mt-2"
+            style="font-size: 13px"
+          >
+            Показать на карте
+          </button>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const latitude = {{ tour.latitude|floatformat:"4" }};
+            const longitude = {{ tour.longitude|floatformat:"4" }};
+
+            const map = L.map("map").setView([latitude, longitude], 12);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution: "© OpenStreetMap",
+            }).addTo(map);
+            L.marker([latitude, longitude])
+              .addTo(map)
+              .bindPopup("Местоположение тура")
+              .openPopup();
+          });
+        </script>
+
+        <!-- Форма: дата, ночи, гости + кнопка -->
+        <form
+          method="post"
+          action="{% url 'add_tour_to_cart' tour.id %}"
+          class="mt-3"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="quantity" value="1" />
+
+          <div class="d-flex gap-3 align-items-center">
+            <div class="mb-2" style="flex: 1; position: relative">
+              <label>Дата вылета:</label>
+              <div style="position: relative">
+                <i
+                  class="fa-solid fa-plane"
+                  style="
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #555;
+                  "
+                ></i>
+                <input
+                  type="date"
+                  name="departure_date"
+                  class="form-control"
+                  style="padding-left: 30px"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-2" style="flex: 1; position: relative">
+              <label>Ночей:</label>
+              <div style="position: relative">
+                <i
+                  class="fa-solid fa-moon"
+                  style="
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #555;
+                  "
+                ></i>
+                <input
+                  type="number"
+                  name="nights"
+                  class="form-control"
+                  value="8"
+                  min="1"
+                  style="padding-left: 30px"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-2" style="flex: 1; position: relative">
+              <label>Гостей:</label>
+              <div style="position: relative">
+                <i
+                  class="fa-solid fa-user-group"
+                  style="
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #555;
+                  "
+                ></i>
+                <input
+                  type="number"
+                  name="guests"
+                  class="form-control"
+                  value="2"
+                  min="1"
+                  style="padding-left: 30px"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Условия -->
+          <p class="mb-1 fs-6">
+            <span class="text-muted">🍽 Питание:</span>
+            <strong>{{ tour.meal_type }}</strong>
+          </p>
+          <p class="mb-1 fs-6">
+            <span class="text-muted">🛏 Тип номера:</span>
+            <strong>{{ tour.room_type }}</strong>
+          </p>
+          <p class="mb-1 fs-6">✈️ Перелет на регулярном рейсе</p>
+          <p class="mb-1 fs-6">🚐 Трансферы</p>
+          <p class="mb-1 fs-6">🩺 Медицинская страховка</p>
+
+          <hr style="border-top: 2px solid #ccc" />
+
+          <!-- Цена и кнопка -->
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ tour.price }} ₽</h4>
+            <span class="badge bg-warning text-dark">💰 промо-тариф</span>
+          </div>
+          <a
+            href="#"
+            class="d-block text-end text-decoration-underline small mt-1"
+            >показать все цены</a
+          >
+
+          {% if user.is_authenticated %}
+          <button
+            type="submit"
+            class="btn w-100 text-dark mt-3"
+            style="background-color: #ffd700"
+          >
+            Забронировать онлайн
+          </button>
+          {% else %}
+          <a href="{% url 'login' %}" class="btn btn-warning w-100 mt-3">
+            Войдите, чтобы добавить в корзину
+          </a>
+          {% endif %}
+        </form>
+
+        <!-- Иконки оплаты -->
+        <div class="text-center mt-3">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
+            height="24"
+            alt="Visa"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png"
+            height="24"
+            alt="MC"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Mir-logo.SVG.svg"
+            height="24"
+            alt="MIR"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+            height="24"
+            alt="ApplePay"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg"
+            height="24"
+            alt="GooglePay"
+          />
+        </div>
+
+        <div class="text-center mt-2">
+          <a href="#" class="small text-decoration-underline text-primary">
+            Бронирование этого тура для агентств
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</div>
+{% endblock %}

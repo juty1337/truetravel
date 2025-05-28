@@ -1,0 +1,179 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Главная — TrueTravel{% endblock %}
+
+{% block content %}
+<!-- Форма фильтров -->
+
+<div id="findbi" class="row bg-primary text-white p-3 rounded">
+    <div class="whitebox">
+        <div class="col-md-3">
+            <label for="city" class="form-label">Город вылета</label>
+            <input type="text" id="city" class="form-control" placeholder="Москва">
+        </div>
+        <div class="col-md-2">
+            <label for="country" class="form-label">Страна</label>
+            <input type="text" id="country" class="form-control" placeholder="Турция">
+        </div>
+        <div class="col-md-2">
+            <label for="date" class="form-label">Дата вылета</label>
+            <input type="date" id="date" class="form-control" value="{{ today }}">
+        </div>
+        <div class="col-md-1">
+            <label for="nights" class="form-label">Ночи</label>
+            <input type="number" id="nights" class="form-control" value="6" min="1">
+        </div>
+        <div class="col-md-2">
+            <label for="tourists" class="form-label">Туристы</label>
+            <select id="tourists" class="form-select">
+                <option>Взрослых 2</option>
+                <option>Взрослых 1</option>
+                <option>Взрослых 3</option>
+            </select>
+        </div>
+            <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-warning" id="find" style="width: 230px;">Найти</button>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Карусель -->
+<div id="carouselExampleIndicators" class="carousel slide mt-4" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner rounded">
+    <div class="carousel-item active">
+        <img src="https://cdn2.tu-tu.ru/image/pagetree_node_data/1/2b82b52b8642dd3fa6d751e41b7c1d08/" class="carousel-img" alt="">
+        
+        <div class="carousel-caption exact-caption text-start">
+    <div class="d-flex align-items-end gap-3">
+        <h1 class="title-main">Турция</h1>
+        <span class="text-light small-text" >Ежедневно с 01.04.2023</span>
+    </div>
+    <p style="font-size: 2rem; position: relative; left: 180px; color: rgb(255, 255, 0);  font-weight: 700;" class="subtitle-text">на рейсах <span class="fw-bold">South Wind</span> <br>
+         и <span class="fw-bold">Yamal Airlines</span></p>
+    <div class="discount-block">
+        <div class="discount-label">Скидки!</div>
+        <div class="discount-value"> <span class="do">до</span> <span class="highlight">-45%</span></div>
+    </div>
+</div>
+    </div>
+</div>
+        <!-- Добавь сюда остальные слайды -->
+
+    </div>
+    
+</div>
+
+<!-- Иконки -->
+<div class="d-flex flex-wrap justify-content-around mt-4 gap-4 text-center">
+    <div>
+        <img src="https://www.svgrepo.com/show/169794/vip.svg" alt="VIP" width="40" />
+        <p>VIP-отдых и услуги</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/62654/beach.svg" alt="Пляжи" width="40" />
+        <p>Пляжи</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/455219/cruise-ship.svg" alt="Круизы" width="40" />
+        <p>Экскурсионный отдых и круизы</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/483728/family.svg" alt="С детьми" width="40" />
+        <p>Отдых с детьми</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/352461/skiing.svg" alt="Горнолыжные курорты" width="40" />
+        <p>Горнолыжные курорты</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/323687/island.svg" alt="Острова" width="40" />
+        <p>Острова</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/285002/wedding-rings-jewelry.svg" alt="Свадебные пакеты" width="40" />
+        <p>Свадебные пакеты</p>
+    </div>
+    <div>
+        <img src="https://www.svgrepo.com/show/354709/alcohol-14.svg" alt="Отдых без детей" width="40" />
+        <p>Отдых без детей</p>
+    </div>
+    <div>
+       
+    </div>
+</div>
+<!-- Сортировка и фильтрация -->
+<form method="get" class="row align-items-end mb-4">
+  <div class="col-md-4">
+    <label for="sort" class="form-label">Сортировать по:</label>
+    <select id="sort" name="sort" class="form-select">
+      <option value="">-- Не выбрано --</option>
+      <option value="year" {% if request.GET.sort == "year" %}selected{% endif %}>Году добавления</option>
+      <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>Наименованию</option>
+      <option value="price" {% if request.GET.sort == "price" %}selected{% endif %}>Цене</option>
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label for="category" class="form-label">Категория:</label>
+    <select id="category" name="category" class="form-select">
+      <option value="">-- Все категории --</option>
+      {% for category in categories %}
+        <option value="{{ category.slug }}"
+          {% if request.GET.category == category.slug %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary w-100">Применить</button>
+  </div>
+</form>
+
+    <h3 class="mt-5 mb-4">Лучшие предложения для отдыха</h3>
+    <div class="row">
+  {% for tour in best_tours %}
+  <div class="col-md-3 mb-4">
+    <div class="card position-relative text-white">
+      <div class="image-wrapper position-relative">
+        <a href="{% url 'tour_detail' tour.pk %}">
+        <img src="{{ tour.image.url }}" class="card-img-top" alt="{{ tour.name }}">
+        </a>
+
+        <!-- Текст поверх изображения -->
+        <div class="overlay-text p-2">
+          <h5 class="card-title mb-1">{{ tour.name }}</h5>
+          <p class="card-text mb-0">{{ tour.price }} ₽</p>
+        </div>
+      </div>
+
+
+      
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+    {% for tour in best_tours %}
+    <div class="tour-card">
+        <h3></h3>
+        <p></p>
+        <p></p>
+        
+        {% if user.is_authenticated %}
+
+        
+        {% else %}
+        <a href="{% url 'login' %}">Войдите, чтобы добавить в корзину</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% endblock %}

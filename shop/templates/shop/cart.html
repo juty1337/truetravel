@@ -1,0 +1,87 @@
+<h2 style="text-align: center; margin-bottom: 30px">🛒 Ваша корзина</h2>
+{% load static %} {% if cart_items %}
+<div
+  style="
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  "
+>
+  <ul style="list-style-type: none; padding: 0">
+    {% for item in cart_items %}
+    <li
+      style="
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+      "
+    >
+      <div>
+        <strong>{{ item.tour.name }}</strong><br />
+        <small>{{ item.quantity }} шт. × {{ item.tour.price }} руб.</small>
+      </div>
+      <div>{{ item.tour.price|floatformat:2|add:"0"|floatformat:2 }} ₽</div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <p style="text-align: right; font-size: 18px; margin-top: 20px">
+    <strong>Итого: {{ total_price }} ₽</strong>
+  </p>
+
+  <form id="checkout-form" method="post" action="{% url 'checkout' %}">
+  {% csrf_token %}
+  <button
+    type="button"
+    onclick="openPopup()"
+    style="
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #4caf50;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    "
+  >
+    💳 Оплатить
+  </button>
+</form>
+  <div
+    class="popup"
+    style="
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 200px;
+      background-color: #ffffff;
+      display: none;
+      opacity: 1;
+      z-index: 9999;
+    "
+  >
+    <h1 style="position: relative; left: 35px">Оплатить по СПБ</h1>
+    <img
+      src="http://qrcoder.ru/code/?https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DxvFZjo5PgG0%26ab_channel%3DDuran&8&0"
+      alt=""
+    />
+    <script>
+      function openPopup() {
+        var popup = document.querySelector(".popup");
+        popup.style.display = "block";
+      }
+    </script>
+  </div>
+</div>
+{% else %}
+<p style="text-align: center; font-size: 18px; color: #777">Корзина пуста.</p>
+{% endif %}

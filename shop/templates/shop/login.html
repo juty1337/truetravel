@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h2>Вход</h2>
+<form method="post" id="login-form">
+    {% csrf_token %}
+    <label>Логин: <input type="text" name="username"></label><br>
+    <label>Пароль: <input type="password" name="password"></label><br>
+    <button type="submit">Войти</button>
+</form>
+<div id="error-login"></div>
+<script>
+    $("#login-form").on("submit", function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: window.location.href,
+            method: "POST",
+            data: $(this).serialize(),
+            success: function(data) {
+                window.location.href = "/";
+            },
+            error: function(xhr) {
+                $("#error-login").text("Неверный логин или пароль.");
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+</body>
+</html>
